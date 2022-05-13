@@ -4,7 +4,7 @@
 
 0. Compile the gml reading tool in your python environment, otherwise the code will not work
 ``` shell
-    cd path2gephi-tool/src/readgml
+    cd ./src/readgml
     python setup.py build_ext --inplace
 ```
 1. Choose .gml files you want to extract idea tree in [./temp_files/input/source_gml/](./temp_files/input/source_gml/). The file name is leading articles paper ID in acemap.
