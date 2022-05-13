@@ -1,4 +1,4 @@
-# Idea Tree Extraction for lab ee447 
+# Idea Tree Extraction Lab for ee447 
 
 ## Usage
 
