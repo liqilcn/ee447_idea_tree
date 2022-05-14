@@ -8,8 +8,6 @@ import math
 import random
 import queue
 import datetime
-import MySQLdb
-import MySQLdb.cursors
 from multiprocessing.pool import Pool
 import matplotlib.pyplot as plt
 import matplotlib

@@ -10,7 +10,6 @@ from readgml import readgml
 from tqdm import tqdm_notebook as tqdm
 from multiprocessing.pool import Pool
 
-from gen_source_gml import gen_source_gml
 from gen_source_gml_by_year import gen_year_by_year_source_gml
 from gen_reduction import gen_reduction
 from gen_skeleton_tree import gen_skeleton_tree

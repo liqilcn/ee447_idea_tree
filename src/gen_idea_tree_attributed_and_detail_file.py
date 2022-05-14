@@ -11,8 +11,6 @@ import json
 import math
 import random
 import queue
-import MySQLdb
-import MySQLdb.cursors
 import matplotlib
 matplotlib.use('Agg')
 from multiprocessing.pool import Pool
@@ -335,23 +333,18 @@ def gen_visible_depth_marked_skeleton_tree_gml_and_high_KE_node_detail(seminal_p
     if seminal_pid in high_KE_node2KE:
         ttt = high_KE_node2KE.pop(str(seminal_pid))
     # 读文件初始化已有标签
-    db = MySQLdb.connect(
-            host = '10.10.10.10',
-            user = 'readonly',
-            password = 'readonly',
-            db = 'am_paper',
-            port = 3306,
-            charset = 'utf8mb4',
-            cursorclass=MySQLdb.cursors.SSCursor
-    )
+    # 从gml文件中读取时间
+    nodes_from_gml, _ = readgml.read_gml(f'../temp_files/source_gml/{seminal_pid}.gml')
+    all_pid2year = {}
+    for n in nodes_from_gml:
+        ppp_id = n['id']
+        ppp_year = int(n['date'].split('-')[0])
+        all_pid2year[str(ppp_id)] = ppp_year
+
     if not os.path.exists(f"../temp_files/attributed_idea_tree_by_year/{seminal_pid}/high_KE_pid2label.json"):
         high_KE_node2year = {}
         for pid in high_KE_node2KE:
-            sql = f"SELECT year FROM `am_paper`.`am_paper` WHERE paper_id = {pid}"
-            cursor = db.cursor()
-            cursor.execute(sql)
-            result = cursor.fetchone()
-            high_KE_node2year[pid] = int(result[0])
+            high_KE_node2year[pid] = all_pid2year[str(pid)] 
         sorted_high_KE_node2year = sorted(high_KE_node2year.items(), key = lambda item:item[1])
         high_KE_pid2label_body = {str(sorted_high_KE_node2year[i][0]):str(i+1) for i in range(len(sorted_high_KE_node2year))}
         high_KE_pid2label = {}
@@ -405,19 +398,6 @@ def gen_visible_depth_marked_skeleton_tree_gml_and_high_KE_node_detail(seminal_p
             line+='\n'
             fp.write(line)
     
-    # 生成主题内部的高知识熵节点的detail
-    high_KE_pid2year = {}
-    high_KE_pid2title = {}
-    high_KE_pid2KE = {}
-    for pid in high_KE_pid2label['body']:
-        sql = f"SELECT year, title FROM `am_paper`.`am_paper` WHERE paper_id = {pid}"
-        cursor = db.cursor()
-        cursor.execute(sql)
-        result = cursor.fetchone()
-        high_KE_pid2year[pid] = int(result[0])
-        high_KE_pid2title[pid] = result[1]
-        high_KE_pid2KE[pid] = float(pid2node_entropy[pid])
-    db.close()
     
     # print(pid2node_entropy)
     # sorted_high_KE_pid2label = sorted(high_KE_pid2label['body'].items(), key=lambda item:int(item[1]))
